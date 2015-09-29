@@ -1,7 +1,7 @@
 var express = require("express");
 var app     = express();
 var redis   = require("redis");
-var client  = redis.createClient(7911, "pub-redis-17911.us-east-1-2.4.ec2.garantiadata.com");
+var client  = redis.createClient(17911, "pub-redis-17911.us-east-1-2.4.ec2.garantiadata.com");
 var url     = require('url');
 
 app.set('port', (process.env.PORT || 5000));
