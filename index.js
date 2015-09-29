@@ -17,6 +17,8 @@ app.get('/auto', function(req, res, next) {
 	var purl = url.parse(req.url, true);
 	var query = purl.query;
 
+	console.log(query.gimme);
+
 	client.zrank("zset_lexo_id", query.gimme, function(err, reply) {
 		if(reply == null) {
 			client.zrank("zset_lexo_desc", query.gimme, function(err, reply) {
