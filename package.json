@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/sbulkley/order",
   "dependencies": {
+    "csvtojson": "^0.4.3",
     "express": "^4.13.3",
     "redis": "^2.0.1"
   }

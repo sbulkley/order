@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Document</title>
+    </head>
+    <body>
+        <form>
+            <input id="search" autocomplete="off" type="text">&nbsp;<span style="color:gray" id="return"></span></input><br>
+            <span id="caption">Press "enter" to autocomplete.</span>
+        </form>
+        
+
+    <script src="jquery-2.1.4.min.js"></script>
+    <script>
+        var delay = (function(){
+            var timer = 0;
+            return function(callback, ms){
+                clearTimeout (timer);
+                timer = setTimeout(callback, ms);
+            };
+        })();
+        
+        var completed = "";
+        var first = true;
+        
+        $('#search').keypress(function(e) {
+            if ( e.which == 13 ) { 
+                $('#search').val(completed);
+                $("#return").text("");
+                $("#caption").text('Press "enter" to search.');
+                if(first) {
+                    first = false;
+                } else {
+                    first = true;
+                    console.log("Cool");
+                }
+                return false;
+            }
+        });
+        
+        function autocomplete(term) {
+            $.get('/auto', "gimme=" + term, function(data) {
+                if(parseInt(data) !== 0) {
+                    completed = data;
+                    $("#return").text((data.toString()).slice(term.length, -1));
+                } else {
+                    completed = "";
+                    $("#return").text("");
+                }
+            });
+        }
+        
+        $('#search').keyup(function(e) {
+            delay(function(){
+                autocomplete($("#search").val().toLowerCase());
+            }, 100 );
+        });
+    </script>
+    </body>
+</html>
