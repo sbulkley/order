@@ -1,0 +1,24 @@
+{
+  "name": "bulkley-order",
+  "version": "1.0.0",
+  "description": "Dev & test.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sbulkley/order.git"
+  },
+  "author": "",
+  "license": "Private",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/sbulkley/order/issues"
+  },
+  "homepage": "https://github.com/sbulkley/order",
+  "dependencies": {
+    "express": "^4.13.3",
+    "redis": "^2.0.1"
+  }
+}
