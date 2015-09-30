@@ -29,6 +29,7 @@ app.get('/auto', function(req, res, next) {
 						for(item in reply) {
 							if(reply[item].slice(-1) == "*") {
 								res.send(reply[item].slice(0,-1));
+								client.quit();
 								return;
 							}
 						}
@@ -41,6 +42,7 @@ app.get('/auto', function(req, res, next) {
 				for(item in reply) {
 					if(reply[item].slice(-1) == "*") {
 						res.send(reply[item].slice(0,-1));
+						client.quit();
 						return;
 					}
 				}
