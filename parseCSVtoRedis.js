@@ -9,8 +9,11 @@ client.on("error", function (err) {
 });
 
 converter.on("end_parsed", function (jason) {
+
 	for(item in jason) {
 		
+		jason[item].desc = jason[item].desc.slice(0,29);
+
 		client.hmset(jason[item].id,
 			"desc", jason[item].desc,
 			"upc", jason[item].upc,

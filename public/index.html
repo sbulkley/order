@@ -5,17 +5,55 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
         <title>Document</title>
     </head>
-    <body>
-        <form>
-            <input id="search" autocomplete="off" type="text">&nbsp;<span style="color:gray" id="return"></span></input><br>
-            <span id="caption">Press "enter" to autocomplete.</span>
-        </form>
-        
+    <body style="font-family: 'Open Sans', sans-serif;">
+        <input id="search" autocomplete="off" type="text" style="font-family: 'Open Sans', sans-serif;"></input><br>
+        <select name="options" size=3 id="options" multiple style="opacity:0;">
+            <option id="opt0" style="font-family: 'Open Sans', sans-serif;"></option>
+            <option id="opt1" style="font-family: 'Open Sans', sans-serif;"></option>
+            <option id="opt2" style="font-family: 'Open Sans', sans-serif;"></option>
+        </select><br>
+        <table>
+            <tr>
+               <td>
+                    Item: 
+               </td>
+               <td>
+                   <span id="choice"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Quantity:
+                </td>
+                <td>
+                    <input type="number" id="quantity" style="font-family: 'Open Sans', sans-serif;">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    WUP:
+                </td>
+                <td>
+                    <span id="wup"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    UPC:
+                </td>
+                <td>
+                    <span id="upc"></span>
+                </td>
+            </tr>
+    </table>
 
     <script src="jquery-2.1.4.min.js"></script>
     <script>
+        var empty = true;
+        
         var delay = (function(){
             var timer = 0;
             return function(callback, ms){
@@ -24,41 +62,75 @@
             };
         })();
         
-        var completed = "";
-        var first = true;
-        
-        $('#search').keypress(function(e) {
-            if ( e.which == 13 ) { 
-                $('#search').val(completed);
-                $("#return").text("");
-                $("#caption").text('Press "enter" to search.');
-                if(first) {
-                    first = false;
+        function autocomplete(partial) {
+            $.get("/auto", "gimme=" + partial, function(data) {
+                if(data.length !== 0) {
+                    $("#opt0").text("");
+                    $("#opt1").text("");
+                    $("#opt2").text("");
+                    $("#options").css('opacity', '1');
+                    var x = data.length;
+                    if(data.length > 3) {
+                        x = 3;
+                    }
+                    for(var y = 0; y < x; y++) {
+                        $("#opt" + y).text(data[y]);
+                    }
+                    empty = false;
                 } else {
-                    first = true;
-                    console.log("Cool");
+                    console.log("[auto] None.");
                 }
-                return false;
-            }
-        });
+            });
+        };
         
-        function autocomplete(term) {
-            $.get('/auto', "gimme=" + term, function(data) {
-                if(parseInt(data) !== 0) {
-                    completed = data;
-                    $("#return").text((data.toString()).slice(term.length, -1));
-                } else {
-                    completed = "";
-                    $("#return").text("");
-                }
+        function details(item, cb) {
+            $.get("/item", "item=" + item, function(data) {
+                cb(data);
             });
         }
         
         $('#search').keyup(function(e) {
-            delay(function(){
-                autocomplete($("#search").val().toLowerCase());
-            }, 100 );
+            if($(this).val().length > 3) {
+                delay(function(){
+                    autocomplete($("#search").val().toLowerCase());
+                }, 100 );
+            } else {
+                $("#options").css('opacity', '0');
+                $("#opt0").text("");
+                $("#opt1").text("");
+                $("#opt2").text("");
+                empty = true;
+            }
+        }).blur(function() {
+            $("#options").css('opacity', '0');
+        }).focus(function() {
+            if(empty) {
+                $("#options").css('opacity', '0').val([]);
+            } else {
+                $("#options").css('opacity', '1').val([]);
+            }
         });
+
+        $("#options").change(function() {
+            $("#quantity").val("");
+            $("#wup").text("");
+            $("#upc").text("");
+            var item = $("#options option:selected").val();
+            $("#choice").text(item).focus();
+            details(item, function(data) {
+                var quant = $("#quantity");
+                quant.attr("min", data.min);
+                quant.val(data.min);
+                quant.change(function() {
+                    if(parseInt($(this).val()) < data.min) {
+                        $(this).val(data.min);
+                    }
+                });
+                $("#wup").text(data.wup);
+                $("#upc").text(data.upc);
+            });
+        });
+        
     </script>
     </body>
 </html>

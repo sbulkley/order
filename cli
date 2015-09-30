@@ -1,0 +1,3 @@
+#! /bin/bash
+
+redis-cli -p 17911 -h pub-redis-17911.us-east-1-2.4.ec2.garantiadata.com
